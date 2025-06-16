@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projects</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        body {
+            opacity: 0;
+            transform: scale(1.02);
+            filter: blur(2px);
+            transition:
+                opacity 0.6s ease,
+                transform 0.6s ease,
+                filter 0.6s ease;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        body.fade-in {
+            opacity: 1;
+            transform: scale(1);
+            filter: blur(0);
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        body.fade-out {
+            opacity: 0;
+            transform: scale(0.98);
+            filter: blur(3px);
+            pointer-events: none;
+        }
+
+
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .project-title {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 15px 0;
+        }
+
+        .project-desc {
+            font-size: 14px;
+            padding: 10px 15px 15px;
+            flex-grow: 1;
+        }
+
+        .expanded-card {
+            position: fixed;
+            top: 0;
+            left: 250px;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-bg);
+            z-index: 999;
+            overflow-y: auto;
+            padding: 40px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .expanded-card img {
+            width: 100%;
+            max-height: 60vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .expanded-card h2 {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+
+        .expanded-card p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .minimize-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: --text-color;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 1001;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+            transition: background 0.3s;
+        }
+
+        .minimize-btn:hover {
+            background: #c9302c;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .expanded-card {
+                left: 0;
+                padding: 20px;
+            }
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeSlideUp 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .fade-in.delay {
+            animation-delay: 0.4s;
+        }
+
+        .extra-images {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .extra-images img {
+            width: 100%;
+            max-width: 250px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .extra-images img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeSlideUp 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .fade-in.delay {
+            animation-delay: 0.4s;
+        }
+
+        .fade-in.delay-more {
+            animation-delay: 0.8s;
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-overlay" id="pageOverlay">
+        <div class="hourglass-container">
+            <svg class="hourglass-icon" viewBox="0 0 24 24" fill="none">
+                <path fill="#fff"
+                    d="M6 2h12v2.5a6.5 6.5 0 01-3.5 5.8 6.5 6.5 0 013.5 5.8V22H6v-5.9a6.5 6.5 0 013.5-5.8A6.5 6.5 0 016 4.5V2z" />
+            </svg>
+            <div class="loading-text">Loading...</div>
+        </div>
+    </div>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="animated-title">
+            <svg viewBox="0 0 300 60" width="100%" height="60">
+                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">
+                    LibwΣΣn D.
+                </text>
+            </svg>
+        </div>
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="projects.html" class="nav-link">Projects</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <button class="dark-toggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>My Projects</h1>
+        <div class="projects-grid" id="projectsGrid">
+            <div class="project-card" onclick="expandProject(this)"
+                data-images="images/test_cat.jpg,images/test_cat.jpg,images/test_cat.jpg"
+                data-longdesc="long_description_with_explanation_placeholder">
+                <img src="images/test_cat.jpg" alt="Project 1">
+                <div class="project-title">Project_name</div>
+                <div class="project-desc">project_short_description_placeholder</div>
+            </div>
+            <div class="project-card" onclick="expandProject(this)"
+                data-images="images/test_cat.jpg,images/test_cat.jpg,images/test_cat.jpg"
+                data-longdesc="long_description_with_explanation_placeholder">
+                <img src="images/test_cat.jpg" alt="Project 2">
+                <div class="project-title">Project_name</div>
+                <div class="project-desc">project_short_description_placeholder</div>
+            </div>
+            <div class="project-card" onclick="expandProject(this)"
+                data-images="images/test_cat.jpg,images/test_cat.jpg,images/test_cat.jpg"
+                data-longdesc="long_description_with_explanation_placeholder">
+                <img src="images/test_cat.jpg" alt="Project 3">
+                <div class="project-title">Project_name</div>
+                <div class="project-desc">project_short_description_placeholder</div>
+            </div>
+            <div class="project-card" onclick="expandProject(this)"
+                data-images="images/test_cat.jpg,images/test_cat.jpg,images/test_cat.jpg"
+                data-longdesc="long_description_with_explanation_placeholder">
+                <img src="images/test_cat.jpg" alt="Project 4">
+                <div class="project-title">Project_name</div>
+                <div class="project-desc">project_short_description_placeholder</div>
+            </div>
+            <div class="project-card" onclick="expandProject(this)"
+                data-images="images/test_cat.jpg,images/test_cat.jpg,images/test_cat.jpg"
+                data-longdesc="long_description_with_explanation_placeholder">
+                <img src="images/test_cat.jpg" alt="Project 5">
+                <div class="project-title">Project_name</div>
+                <div class="project-desc">project_short_description_placeholder</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS: Expand Project -->
+    <script>
+        function expandProject(card) {
+            const imageSrc = card.querySelector('img').src;
+            const title = card.querySelector('.project-title').textContent;
+            const shortDesc = card.querySelector('.project-desc').textContent;
+            const longDesc = card.dataset.longdesc;
+
+            // Parse custom image list from data-images attribute
+            const imageList = card.dataset.images ? card.dataset.images.split(',') : [];
+
+            const expanded = document.createElement('div');
+            expanded.classList.add('expanded-card');
+            expanded.id = "expandedCard";
+
+            expanded.innerHTML = `<button class="minimize-btn" onclick="closeExpanded()">❌</button>
+                <img src="${imageSrc}" alt="${title}" />
+                <h2>${title}</h2>
+                <p class="fade-in">${shortDesc}</p>
+                <p class="fade-in delay">${longDesc}</p>
+                <div class="extra-images fade-in delay-more">
+                ${imageList.map(img => `<img src="${img.trim()}" alt="Extra Image">`).join('')}
+                </div>`;
+
+            document.body.appendChild(expanded);
+            document.getElementById('projectsGrid').style.display = 'none';
+        }
+
+        function closeExpanded() {
+            const expanded = document.getElementById("expandedCard");
+            if (expanded) expanded.remove();
+            document.getElementById('projectsGrid').style.display = 'grid';
+        }
+
+        function closeExpanded() {
+            const expanded = document.getElementById("expandedCard");
+            if (expanded) expanded.remove();
+            document.getElementById('projectsGrid').style.display = 'grid';
+        }
+
+        function closeExpanded() {
+            const expanded = document.getElementById("expandedCard");
+            if (expanded) expanded.remove();
+            document.getElementById('projectsGrid').style.display = 'grid';
+        }
+
+
+        function closeExpanded() {
+            const expanded = document.getElementById("expandedCard");
+            if (expanded) expanded.remove();
+            document.getElementById('projectsGrid').style.display = 'grid';
+        }
+
+        // Dark mode toggle
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.querySelector('.dark-toggle').textContent = '☀️ Light Mode';
+        }
+
+        function toggleDarkMode() {
+            const body = document.body;
+            const btn = document.querySelector('.dark-toggle');
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                btn.textContent = '☀️ Light Mode';
+            } else {
+                localStorage.setItem('theme', 'light');
+                btn.textContent = '🌙 Dark Mode';
+            }
+        }
+        // Highlight current link
+        const currentPath = window.location.pathname.split("/").pop();
+        const links = document.querySelectorAll('.nav-link');
+
+        links.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === currentPath) {
+                link.classList.add('active');
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Fade-in effect
+            requestAnimationFrame(() => {
+                document.body.classList.add("fade-in");
+            });
+
+            const links = document.querySelectorAll("a.nav-link");
+            const overlay = document.getElementById("pageOverlay");
+
+            links.forEach(link => {
+                link.addEventListener("click", e => {
+                    e.preventDefault();
+                    const href = link.getAttribute("href");
+
+                    // Show overlay
+                    overlay.classList.add("show");
+
+                    // Navigate after short delay
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 400); // Fast, no black screen
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
