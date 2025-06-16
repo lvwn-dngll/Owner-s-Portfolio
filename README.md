@@ -1,2 +1,4 @@
-# Owner-s-Portfolio
-This is the portfolio of the owner to be used in future purposes.
+# Owner's-Portfolio
+
+This portfolio shows my (Livewen Dongallo) background and past projects. Will update it overtime.
+
